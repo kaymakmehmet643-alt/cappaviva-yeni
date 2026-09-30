@@ -1,0 +1,1 @@
+Fotoğraflarını buraya koy. Yollarını assets/js/data.js içindeki images bölümüne yaz.
