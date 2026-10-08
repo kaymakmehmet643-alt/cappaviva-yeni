@@ -119,7 +119,7 @@
       if (S.step === 1 && !S.date) { S.err = A.t('bk.errDate'); return render(); }
       if (S.step === 2 && !S.name) { S.err = A.t('bk.errName'); return render(); }
       S.err = '';
-      if (S.step === 2) S.msg = message();
+      if (S.step === 2) S.msg = window.CVMsg ? CVMsg.wrap(message()) : message();
       S.step++; render(); top();
     }
   }
@@ -132,7 +132,7 @@
       card.addEventListener('input', () => { readInputs(); summary(); });
       render();
     },
-    open(id, note) {
+    open(id, note, pre) { if (pre && pre.date) { S.date = pre.date; const d = new Date(pre.date + 'T12:00:00'); S.month = new Date(d.getFullYear(), d.getMonth(), 1); } if (pre && pre.ad) S.ad = pre.ad;
       if (id && item(id)) { S.sel = id; S.cat = item(id).cat; S.step = 1; }
       else if (!S.sel) S.step = 0;
       if (note) S.note = note;

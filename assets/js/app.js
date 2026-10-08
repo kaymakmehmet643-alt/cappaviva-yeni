@@ -23,7 +23,7 @@
     try { navigator.clipboard.writeText(text).then(() => toast(t('toast.copied')), () => toast(t('toast.copyFail'))); }
     catch (e) { toast(t('toast.copyFail')); }
   }
-  const wa = msg => 'https://wa.me/' + CV.phone + (msg ? '?text=' + encodeURIComponent(msg) : '');
+  const wa = msg => { const m = window.CVMsg ? CVMsg.wrap(msg) : msg; return 'https://wa.me/' + CV.phone + (m ? '?text=' + encodeURIComponent(m) : ''); };
 
   /* ---------- para birimi ---------- */
   const rates = Object.assign({}, CV.currencies);
@@ -141,7 +141,7 @@
     }).join('');
   }
   function renderDest() {
-    $('#destTrack').innerHTML = CV.destinations.map((d, i) => `<a class="dcard" href="${DP}#d-${d.k}"><div class="media" data-img="${d.k}" data-scene='${JSON.stringify(d.scene)}'></div><span class="num">${String(i + 1).padStart(2, '0')}</span><small>${t('d.' + d.k + '.k')}</small><h3>${t('d.' + d.k + '.t')}</h3><p>${t('d.' + d.k + '.p')}</p></a>`).join('');
+       $('#destTrack').innerHTML = CV.destinations.map((d, i) => { const pl = window.CVPlaces && CVPlaces.get(d.k); return `<a class="dcard" href="${pl ? CVPlaces.url(pl) : DP + '#d-' + d.k}"><div class="media" data-img="${d.k}" data-scene='${JSON.stringify(d.scene)}'></div><span class="num">${String(i + 1).padStart(2, '0')}</span>${pl ? `<span class="dc-km">${CVPlaces.dist(pl)}</span>` : ''}<div class="dc-body"><small>${t('d.' + d.k + '.k')}</small><h3>${t('d.' + d.k + '.t')}</h3><p>${t('d.' + d.k + '.p')}</p><span class="dc-go" aria-hidden="true">→</span></div></a>`; }).join('');
     const names = CV.destinations.map(d => t('d.' + d.k + '.t'));
     const row = names.map((n, i) => i % 2 ? `<span><em>${n}</em></span>` : `<span>${n}</span>`).join('<span>·</span>');
     $('#marquee').innerHTML = row + '<span>·</span>' + row + '<span>·</span>';
@@ -166,17 +166,45 @@
     $$('[data-lang-name]').forEach(el => el.textContent = I.info(I.lang).n);
   }
   /* ---------- Premium menü içeriği ---------- */
-  const SECS = [['home', 'nav.home', HOME ? '#top' : 'index.html'], ['dest', 'nav.dest'], ['tours', 'nav.tours'], ['balloon', 'nav.balloon'], ['transfer', 'dr.transfer'], ['plans', 'dr.plans'], ['ws', 'ws.eyebrow'], ['guide', 'nav.guide'], ['about', 'nav.about'], ['contact', 'nav.contact']];
-  let drActive = 'dest';
-  const BI = id => { const x = item(id); return `<li><button type="button" data-book="${id}"><span>${t(x.n)}</span><em>${x.eur ? fmt(x.eur) : t('c.ask')}</em></button></li>`; };
+  /* Menü 3 gruptan oluşur: Keşfet / Deneyimler / CappaViva.
+     Başlık anahtarı '@' ile başlarsa places.js'ten, '#' ile başlarsa offers.js'ten gelir. */
+  const O = window.CVOffers, PL = window.CVPlaces;
+  const SECG = [
+    ['gx', [['dest', 'nav.dest'], ['vadi', '@vadi'], ['muze', '@muze'], ['kilise', '@kilise'], ['yeralti', '@yeralti']]],
+    ['ge', [['deals', '#deals'], ['premium', '#premium'], ['tours', 'nav.tours'], ['balloon', 'nav.balloon'], ['ws', 'ws.eyebrow'], ['transfer', 'dr.transfer'], ['plans', 'dr.plans'], ['guide', 'nav.guide']]],
+    ['gc', [['home', 'nav.home', HOME ? '#top' : 'index.html'], ['about', 'nav.about'], ['contact', 'nav.contact']]]
+  ].map(([g, list]) => [g, list.filter(([k]) => (k !== 'deals' && k !== 'premium') || O).filter(([, key]) => key[0] !== '@' || PL)]);
+  const SL = key => key[0] === '@' ? PL.t(key.slice(1)) : key[0] === '#' ? O.t(key.slice(1)) : t(key);
+  let drActive = O ? 'deals' : 'dest';
+  const offPct = x => (x && x.eur && x.old ? Math.round((1 - x.eur / x.old) * 100) : 0);
+  const BI = id => { const x = item(id), o = offPct(x);
+    return `<li><button type="button" data-book="${id}"><span>${t(x.n)}${O && O.isPop(id) ? `<i class="dr-pop">${O.t('pop')}</i>` : ''}</span><em>${o ? `<i class="dr-off">-${o}%</i>` : ''}${x.eur ? fmt(x.eur) : t('c.ask')}</em></button></li>`; };
   const AL = (href, k, extra = '') => `<li><a href="${href}"><span>${t(k)}</span>${extra}</a></li>`;
   const G = (k, inner, p) => `<div class="dr-g"><h6>${t(k)}</h6>${p ? `<p>${t(p)}</p>` : ''}<ul>${inner}</ul></div>`;
   const MAPS = 'https://www.google.com/maps/search/?api=1&query=G%C3%B6reme%2C%20Nev%C5%9Fehir';
   const liveRows = (cls, keys) => keys.map(([k, l, w]) => `<div class="${cls}" ${w ? `data-live-wrap="${l}" ${wx ? '' : 'hidden'}` : ''}><span>${t(k)}</span><b data-live="${l}">—</b></div>`).join('');
+  /* kategori listesi: vadiler, müzeler, kiliseler, yer altı şehirleri */
+  const placeCat = c => `<div class="dr-g dr-cat"><h6>${PL.t(c)}</h6><p>${PL.t('i.' + c)}</p>
+      <ul class="dr-plist">${PL.byCat(c).map((p, i) => `<li style="--i:${i}"><a href="${PL.url(p)}"><span>${PL.name(p)}</span><em>${p.km ? p.km + ' km' : '●'}</em></a></li>`).join('')}</ul>
+      <a class="dr-more" href="${DP}#${c}">${O ? O.t('all') : t('mm.all')} →</a></div>`;
+  /* son dakika fırsat kartı */
+  const dealCard = (d, i) => { const x = item(d.id); if (!x) return ''; const o = offPct(x);
+    return `<div class="dr-deal" style="--i:${i}"><div class="dr-deal-top"><span class="dr-hot">${O.t('hot')}</span>${o ? `<span class="dr-save">${O.t('off', { n: o })}</span>` : ''}</div>
+      <b>${t(x.n)}</b><small>${O.t(O.passed(d.until) ? 'next' : d.day)} · ${O.t('closes')} <time data-cd="${d.until}">${O.left(d.until)}</time></small>
+      <div class="dr-deal-f"><span class="dr-price">${x.eur ? fmt(x.eur) : t('c.ask')}${x.old ? `<s>${fmt(x.old)}</s>` : ''}</span><button class="btn btn-primary btn-sm" type="button" data-book="${d.id}">${t('c.book')}</button></div></div>`; };
+  /* premium paket kartı */
+  const pkgCard = (p, i) => { const sum = p.items.reduce((s, id) => s + ((item(id) || {}).eur || 0), 0), save = p.eur && sum ? Math.round((1 - p.eur / sum) * 100) : 0, nm = O.pkgName(p);
+    return `<div class="dr-pkg" style="--i:${i}"><div class="dr-deal-top"><span class="dr-gold">PREMIUM · ${O.t('days', { n: p.days })}</span>${p.pop ? `<i class="dr-pop">${O.t('pop')}</i>` : ''}${save > 0 ? `<span class="dr-save">${O.t('save', { n: save })}</span>` : ''}</div>
+      <b>${nm}</b><p>${O.pkgDesc(p)}</p><div class="dr-tags">${p.items.map(id => `<span>${t((item(id) || { n: id }).n)}</span>`).join('')}</div>
+      <div class="dr-deal-f"><span class="dr-price">${p.eur ? fmt(p.eur) + (sum ? `<s>${fmt(sum)}</s>` : '') : `<small>${sum ? O.t('sep', { p: fmt(sum) }) : ''}</small>`}</span>
+      <button class="btn btn-primary btn-sm" type="button" data-book="myplan" data-note="Premium: ${nm} (${p.items.map(id => t((item(id) || { n: id }).n)).join(' + ')})">${p.eur ? t('c.book') : O.t('ask')}</button></div></div>`; };
   function subHTML(k) {
     switch (k) {
-      case 'dest': if (window.CVPlaces) { const P = CVPlaces;
-        return P.cats.map(c => `<div class="dr-g dr-pl"><h6><a href="${DP}#${c.k}">${P.t(c.k)}</a></h6><ul>${P.byCat(c.k).map(p => `<li><a href="${P.url(p)}">${P.name(p)}</a></li>`).join('')}</ul></div>`).join('')
+      case 'deals': return `<div class="dr-g dr-cat"><h6>${O.t('deals')}</h6><p>${O.t('dealsP')}</p></div><div class="dr-cards">${O.deals.map(dealCard).join('')}</div>`;
+      case 'premium': return `<div class="dr-g dr-cat"><h6>${O.t('premium')}</h6><p>${O.t('premP')}</p></div><div class="dr-cards">${O.packages.map(pkgCard).join('')}</div>`;
+      case 'vadi': case 'muze': case 'kilise': case 'yeralti': return placeCat(k);
+      case 'dest': if (PL) {
+        return `<div class="dr-g dr-cat"><h6>${t('nav.dest')}</h6><p>${PL.t('sub')}</p></div>` + ['bolge'].map(c => `<div class="dr-g dr-pl"><h6><a href="${DP}#${c}">${PL.t(c)}</a></h6><ul>${PL.byCat(c).map(p => `<li><a href="${PL.url(p)}">${PL.name(p)}</a></li>`).join('')}</ul></div>`).join('')
           + `<div class="dr-g"><ul>${AL(DP, 'mm.all', '<em>→</em>')}</ul><button class="btn btn-primary" type="button" data-book="vip" style="margin-top:16px">${t('lg.cta')}</button></div>`; }
         return G('dest.eyebrow', CV.destinations.map(d => AL(`${DP}#d-${d.k}`, 'd.' + d.k + '.t', `<em>${t('d.' + d.k + '.k')}</em>`)).join('') + AL(DP, 'mm.all', '<em>→</em>'), 'dest.sub');
       case 'tours': return G('dr.daily', ['kirmizi', 'yesil', 'mix', 'comlektur'].map(BI).join('')) + G('dr.adv', ['atv', 'jeep', 'klasik', 'at', 'deve'].map(BI).join(''));
@@ -184,20 +212,28 @@
       case 'transfer': return G('dr.transfer', ['x-kayseri', 'x-nevsehir', 'x-shuttle', 'x-city'].map(BI).join(''), 'tr.sub');
       case 'plans': return G('dr.plans', CV.plans.map((p, i) => `<li><button type="button" data-book="${p.id}"><span>${t(p.n)}</span><em>${t('pl.t' + (i + 1))}</em></button></li>`).join('') + AL(H('#planla'), 'dr.planner', '<em>→</em>'), 'pl.sub');
       case 'ws': return G('ws.eyebrow', ['gece', 'sema', 'hamam', 'comlek', 'yemek', 'hali', 'sarap', 'foto'].map(BI).join(''));
-      case 'guide': return `<div class="dr-g"><h6>${t('lg.eyebrow')}</h6><p class="dr-big">${t('lg.title')}</p><p>${t('lg.p')}</p><ul class="m-checks">${[1, 2, 3, 4].map(i => `<li>${t('lg.' + i)}</li>`).join('')}</ul><button class="btn btn-primary" type="button" data-book="vip" style="margin-top:18px">${t('lg.cta')}</button></div>`;
+      case 'guide': if (window.CVGuide) return CVGuide.menu(); return `<div class="dr-g"><h6>${t('lg.eyebrow')}</h6><p class="dr-big">${t('lg.title')}</p><p>${t('lg.p')}</p><ul class="m-checks">${[1, 2, 3, 4].map(i => `<li>${t('lg.' + i)}</li>`).join('')}</ul><button class="btn btn-primary" type="button" data-book="vip" style="margin-top:18px">${t('lg.cta')}</button></div>`;
       case 'about': return G('why.eyebrow', [1, 2, 3, 4].map(i => AL(H('#hakkimizda'), 'why.r' + i + '.n')).join(''), 'why.title') + G('dr.more', AL(H('#ortaklar'), 'pt.eyebrow') + AL(H('#blog'), 'dr.blog') + AL(H('#yorumlar'), 'rv.eyebrow') + AL(H('#sss'), 'dr.faq'));
       case 'contact': return `<div class="dr-g"><h6>${t('nav.contact')}</h6><p>${t('ct.title')} ${t('ct.sub')}</p><ul><li><a href="${wa('')}" target="_blank" rel="noopener"><span>WhatsApp</span><em dir="ltr">${CV.phoneDisplay}</em></a></li><li><a href="${H('#iletisim')}"><span>${t('ct.mail')}</span><em>${CV.email}</em></a></li><li><a href="${H('#iletisim')}"><span>${t('ct.addr')}</span><em>${t('ct.addrV')}</em></a></li><li><a href="${MAPS}" target="_blank" rel="noopener"><span>${t('ct.maps')}</span><em>↗</em></a></li></ul></div>`;
     }
     return '';
   }
   function renderDrawer() {
-    const main = SECS.map(([k, key, href], i) => k === 'home'
-      ? `<li><a class="dr-item" href="${href}" style="transition-delay:${.18 + i * .04}s"><small>${pad(i + 1)}</small><span>${t(key)}</span></a></li>`
-      : `<li><button class="dr-item ${k === drActive ? 'on' : ''}" type="button" data-sec="${k}" aria-expanded="false" style="transition-delay:${.18 + i * .04}s"><small>${pad(i + 1)}</small><span>${t(key)}</span><b class="arr">→</b></button><div class="dr-inline" data-inline="${k}" hidden></div></li>`).join('');
-    $('#drBody').innerHTML = `<nav class="dr-main" aria-label="${t('nav.menu')}"><ol>${main}</ol></nav>
+    let n = 0;
+    const main = SECG.map(([g, list]) => `<div class="dr-grp"><h6><span>${O ? O.t(g) : ''}</span></h6><ol>${list.map(([k, key, href]) => { n++; const d = `transition-delay:${.15 + n * .035}s`, cls = k === 'deals' ? ' is-deal' : k === 'premium' ? ' is-prem' : '';
+      const badge = k === 'deals' ? `<i class="dr-badge">${O.t('hot')}</i>` : k === 'premium' ? `<i class="dr-badge gold">VIP</i>` : '';
+      return k === 'home'
+        ? `<li><a class="dr-item" href="${href}" style="${d}"><small>${pad(n)}</small><span>${SL(key)}</span></a></li>`
+        : `<li><button class="dr-item${cls} ${k === drActive ? 'on' : ''}" type="button" data-sec="${k}" aria-expanded="false" style="${d}"><small>${pad(n)}</small><span>${SL(key)}</span>${badge}<b class="arr">→</b></button><div class="dr-inline" data-inline="${k}" hidden></div></li>`; }).join('')}</ol></div>`).join('');
+    /* üstte kayan fırsat şeridi */
+    const ribbon = O ? O.deals.map(d => { const x = item(d.id); const o = offPct(x); return x ? `<span><b>${O.t('hot')}</b>${t(x.n)} · ${x.eur ? fmt(x.eur) : ''}${o ? ` <em>-${o}%</em>` : ''}</span>` : ''; }).join('') : '';
+    const top = O && O.deals[0] ? dealCard(O.deals[0], 0) : '';
+    $('#drBody').innerHTML = (ribbon ? `<div class="dr-ribbon" aria-hidden="true"><div>${ribbon}${ribbon}${ribbon}</div></div>` : '') + `<nav class="dr-main" aria-label="${t('nav.menu')}">${main}</nav>
       <div class="dr-sub"><div class="dr-sub-in" id="drSub">${subHTML(drActive)}</div></div>
       <aside class="dr-side">
+        ${top ? `<div class="dr-feat">${top}</div>` : ''}
         <div class="dr-card"><h6><i></i>${t('ft.live')}</h6>${liveRows('dr-row', [['ft.time', 'time'], ['ft.sunrise', 'sun'], ['ft.pickup', 'pick'], ['wx.temp', 'temp', 1], ['wx.wind', 'wind', 1], ['ft.rate', 'rate']])}</div>
+        ${O ? `<div class="dr-card dr-trust"><h6>${O.t('trust')}</h6><ul><li>${t('ft.pol3')}</li><li>${t('ft.pol4')}</li><li>${t('ft.pol2')}</li></ul></div>` : ''}
         <div class="dr-card"><h6>${t('nav.lang')}</h6><div class="dr-chips">${I.langs.map(l => `<button type="button" data-lang="${l.c}" aria-checked="${l.c === I.lang}" lang="${l.c}">${l.n}</button>`).join('')}</div>
         <h6 style="margin-top:8px">${t('nav.cur')}</h6><div class="dr-chips">${Object.keys(rates).map(c => `<button type="button" data-cur="${c}" aria-checked="${c === cur}">${SYM[c]} ${c}</button>`).join('')}</div></div>
       </aside>`;
@@ -229,7 +265,7 @@
       case 'contact': return `<div><h5>${t('ct.eyebrow')}</h5><p class="m-title">${t('ct.title')}</p><p class="m-p">${t('ct.sub')}</p><a class="btn btn-wa btn-sm" href="${wa('')}" target="_blank" rel="noopener">WhatsApp</a></div>
         <div class="m-ct"><div><span><small>${t('ct.wa')}</small><b>${CV.phoneDisplay}</b></span></div><div><span><small>${t('ct.mail')}</small><b>${CV.email}</b></span></div><div><span><small>${t('ct.addr')}</small><b>${t('ct.addrV')}</b></span><a class="link" href="${MAPS}" target="_blank" rel="noopener">Maps</a></div></div>
         <div><h5>${t('ft.live')}</h5>${liveL([['ft.time', 'time'], ['ft.sunrise', 'sun'], ['wx.temp', 'temp', 1], ['wx.wind', 'wind', 1]])}</div>`;
-      case 'guide': return `<div><h5>${t('lg.eyebrow')}</h5><p class="m-title">${t('lg.title')}</p><p class="m-p">${t('lg.p')}</p><button class="btn btn-primary btn-sm" type="button" data-book="vip">${t('lg.cta')}</button></div>
+      case 'guide': if (window.CVGuide) return CVGuide.menu(); return `<div><h5>${t('lg.eyebrow')}</h5><p class="m-title">${t('lg.title')}</p><p class="m-p">${t('lg.p')}</p><button class="btn btn-primary btn-sm" type="button" data-book="vip">${t('lg.cta')}</button></div>
         <ul class="m-checks">${[1, 2, 3, 4].map(i => `<li>${t('lg.' + i)}</li>`).join('')}</ul>
         <div class="m-feature"><h5>${t('ai.eyebrow')}</h5><p class="m-title">${t('ai.title')}</p><p>${t('ai.sub')}</p><a class="btn btn-primary btn-sm" href="${H('#planla')}">${t('hero.cta2')}</a></div>`;
     }
@@ -274,6 +310,8 @@
   $$('[data-copy-phone]').forEach(b => b.addEventListener('click', () => copy(CV.phoneDisplay)));
   $$('[data-copy-email]').forEach(b => b.addEventListener('click', () => copy(CV.email)));
   if ($('#tursabNo')) $('#tursabNo').textContent = CV.tursabNo || '—';
+    /* Instagram (data.js > instagram) — tüm sayfalardaki Instagram simgeleri profile gider */
+  if (CV.instagram) $$('a[aria-label="Instagram"]').forEach(a => { a.href = 'https://www.instagram.com/' + CV.instagram + '/'; a.target = '_blank'; a.rel = 'noopener'; });
   if (CV.images.tursab) $$('[data-tursab-logo]').forEach(el => { el.innerHTML = `<img src="${CV.images.tursab}" alt="TÜRSAB">`; el.style.background = 'transparent'; el.style.padding = '0'; });
   if ($('#newsForm')) $('#newsForm').addEventListener('submit', e => { e.preventDefault(); $('#newsMail').value = ''; toast(t('nl.ok')); });
 
@@ -321,17 +359,36 @@
     sizeHero(); requestAnimationFrame(heroFrame);
   }
 
-  /* ---------- Destinasyonlar: yatay kayan bölüm ---------- */
+   /* ---------- Destinasyonlar: yatay kayan bölüm (yumuşak kayış + 3B kartlar) ---------- */
   const dest = $('#destinasyonlar'), track = $('#destTrack'), dWrap = $('#destWrap'), dBar = $('#destBar');
-  let pinDist = 0;
+  let pinDist = 0, destGoal = 0, destNow = 0, destRAF = 0;
+  /* her kartın ekran ortasına uzaklığı: ortadaki kart öne çıkar, kenardakiler döner ve küçülür */
+  function destFx() {
+    if (!track) return;
+    const W = innerWidth;
+    track.querySelectorAll('.dcard').forEach(c => {
+      const r = c.getBoundingClientRect(), p = clamp((r.left + r.width / 2 - W / 2) / (W * .6), -1, 1);
+      c.style.setProperty('--p', p.toFixed(3)); c.style.setProperty('--a', Math.abs(p).toFixed(3));
+    });
+  }
+  /* fare tekerleği sert zıplatmasın: kartlar hedefe yağ gibi kayar */
+  function destTick() {
+    destNow += (destGoal - destNow) * (reduce ? 1 : .09);
+    if (Math.abs(destGoal - destNow) < .0005) destNow = destGoal;
+    track.style.transform = `translate3d(${(isRTL() ? 1 : -1) * destNow * pinDist}px,0,0)`;
+    dBar.style.transform = `scaleX(${.1 + .9 * destNow})`;
+    destFx();
+    destRAF = destNow === destGoal ? 0 : requestAnimationFrame(destTick);
+  }
   function setupDest() {
     if (!dest || !track) return;
     const pin = innerWidth >= 900 && !reduce;
     dest.classList.toggle('pinned', pin);
     if (pin) { pinDist = Math.max(0, track.scrollWidth - innerWidth); dest.style.height = (innerHeight + pinDist) + 'px'; }
     else { dest.style.height = ''; track.style.transform = ''; pinDist = 0; }
+    destFx();
   }
-  if (dWrap) dWrap.addEventListener('scroll', () => { if (!pinDist) { const m = dWrap.scrollWidth - dWrap.clientWidth; dBar.style.transform = `scaleX(${.1 + .9 * clamp(Math.abs(dWrap.scrollLeft) / (m || 1))})`; } }, { passive: true });
+  if (dWrap) dWrap.addEventListener('scroll', () => { if (!pinDist) { const m = dWrap.scrollWidth - dWrap.clientWidth; dBar.style.transform = `scaleX(${.1 + .9 * clamp(Math.abs(dWrap.scrollLeft) / (m || 1))})`; destFx(); } }, { passive: true });
 
   /* ---------- Balon kademeleri ---------- */
   const bMedia = $$('#bvis .media'), tiers = $$('.tier'); let tierIdx = 0;
@@ -357,12 +414,13 @@
       cue.style.opacity = 1 - smooth(0, .08, heroP);
       (heroImg || hc).style.transform = `scale(${1.08 - heroP * .08})`;
       heroLimit = span + vh * .55;
-    } else if (!HOME && $('.page-hero')) heroLimit = $('.page-hero').offsetHeight - nav.offsetHeight;    nav.classList.toggle('on-hero', !bv && y < heroLimit && !document.body.classList.contains('drawer-open'));
+    } else if (!HOME && $('.page-hero')) heroLimit = $('.page-hero').offsetHeight - nav.offsetHeight;
+    nav.classList.toggle('on-hero', !bv && y < heroLimit && !document.body.classList.contains('drawer-open'));
     const dh = document.documentElement.scrollHeight - vh; $('#progress').style.transform = `scaleX(${dh > 0 ? y / dh : 0})`;
-    if (HOME && pinDist) {
-      const top = dest.getBoundingClientRect().top + y, p = clamp((y - top) / pinDist);
-      track.style.transform = `translate3d(${(isRTL() ? 1 : -1) * p * pinDist}px,0,0)`;
-      dBar.style.transform = `scaleX(${.1 + .9 * p})`;
+       if (HOME && pinDist) {
+      const top = dest.getBoundingClientRect().top + y;
+      destGoal = clamp((y - top) / pinDist);
+      if (!destRAF) destRAF = requestAnimationFrame(destTick);
     }
     if (HOME) {
       if (bv) { $$('#navLinks a').forEach(l => l.classList.remove('active')); return; }

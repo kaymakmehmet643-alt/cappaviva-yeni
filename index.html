@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Sans+Arabic:wght@400;600;700;800&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/premium.css?v=3">
+<script src="assets/js/theme.js?v=3"></script>
 </head>
 <body>
 <!--BODY-START-->
@@ -47,7 +49,7 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="#top" data-i18n="nav.home">Home</a></li>
       <li data-mega="dest"><a href="destinasyonlar.html"><span data-i18n="nav.dest">Destinations</span><i class="car"></i></a></li>
-      <li data-mega="tours"><a href="#turlar"><span data-i18n="nav.tours">Tours</span><i class="car"></i></a></li>
+      <li data-mega="tours"><a href="turlar.html"><span data-i18n="nav.tours">Tours</span><i class="car"></i></a></li>
       <li data-mega="balloon"><a href="#balon"><span data-i18n="nav.balloon">Balloon</span><i class="car"></i></a></li>
       <li data-mega="about"><a href="#hakkimizda"><span data-i18n="nav.about">About Us</span><i class="car"></i></a></li>
       <li data-mega="contact"><a href="#iletisim"><span data-i18n="nav.contact">Contact</span><i class="car"></i></a></li>
@@ -80,8 +82,9 @@
       <div class="hero-copy" id="heroCopy">
         <p class="hero-eyebrow" data-i18n="hero.eyebrow">Göreme · Cappadocia</p>
         <h1 class="hero-title"><span data-i18n="hero.title">Cappadocia.</span><span class="hero-sub" data-i18n="hero.sub">Like you've never seen it.</span></h1>
-        <div class="hero-ctas">
-          <a class="btn btn-primary" href="#turlar" data-i18n="hero.cta1">Explore tours</a>
+             <div class="hero-ctas">
+          <a class="btn btn-primary" href="#rezervasyon" data-book="" data-i18n="nav.book">Book now</a>
+          <a class="btn btn-glass" href="#planlar" data-i18n="dr.plans">Ready plans</a>
           <a class="btn btn-glass" href="#planla" data-i18n="hero.cta2">Design your trip</a>
         </div>
       </div>
@@ -98,13 +101,15 @@
   </section>
 
   <!-- 2. GÜVEN BARI -->
-  <section class="trust" aria-label="Trust">
-    <div class="c trust-in">
-      <div><strong class="tnum">4.9/5</strong><span class="stars" aria-hidden="true"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></span><span data-i18n="trust.rating">2,500+ guest reviews</span></div>
-      <div><strong class="tnum">15.000+</strong><span data-i18n="trust.guests">happy guests</span></div>
-      <div><span class="tursab-mini" data-tursab-logo><span class="badge-t">TÜRSAB</span></span><span data-i18n="trust.tursab">official member agency</span></div>
-      <div><strong>TripAdvisor</strong><span data-i18n="trust.ta">Certificate of Excellence</span></div>
-      <div><strong class="tnum">7/24</strong><span>WhatsApp</span></div>
+  <section class="trust tb" aria-label="Trust">
+    <div class="c">
+      <div class="tb-bar">
+        <div class="tb-cell"><span class="tb-ic"><svg><use href="#i-star"/></svg></span><span class="tb-tx"><strong class="tnum" data-count="4.9" data-dec="1" data-suf="/5">4.9/5</strong><span data-i18n="trust.rating">2,500+ guest reviews</span></span></div>
+        <div class="tb-cell"><span class="tb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.4 3.1-5.3 6-5.3s5.4 1.9 6 5.3M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.6 14.6c1.8.6 3 2.3 3.4 4.9"/></svg></span><span class="tb-tx"><strong class="tnum" data-count="15000" data-suf="+">15.000+</strong><span data-i18n="trust.guests">happy guests</span></span></div>
+        <div class="tb-cell"><span class="tb-ic tb-tursab" data-tursab-logo><span class="badge-t">TÜRSAB</span></span><span class="tb-tx"><strong>TÜRSAB</strong><span data-i18n="trust.tursab">official member agency</span></span></div>
+        <div class="tb-cell"><span class="tb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="m8.5 13.3-1.8 7.2 5.3-2.6 5.3 2.6-1.8-7.2"/></svg></span><span class="tb-tx"><strong>TripAdvisor</strong><span data-i18n="trust.ta">Certificate of Excellence</span></span></div>
+        <a class="tb-cell" data-wa-link target="_blank" rel="noopener"><span class="tb-ic tb-wa"><svg><use href="#i-wa"/></svg></span><span class="tb-tx"><strong class="tnum">7/24</strong><span>WhatsApp</span></span></a>
+      </div>
     </div>
   </section>
 
@@ -342,24 +347,8 @@
     </div>
   </section>
 
-  <!-- 15. ORTAKLAR -->
-  <section class="partners sec" id="ortaklar">
-    <div class="c">
-      <div class="sec-head rv">
-        <span class="eyebrow" data-i18n="pt.eyebrow">Partners</span>
-        <h2 class="h2" data-i18n="pt.title">Stronger together.</h2>
-        <p class="lede" data-i18n="pt.sub"></p>
-      </div>
-      <div class="pt-grid">
-        <div class="pt rv"><svg><use href="#i-balloon"/></svg><h3 data-i18n="pt.c1"></h3><div class="slot"><i></i><i></i><i></i></div></div>
-        <div class="pt rv"><svg><use href="#i-bed"/></svg><h3 data-i18n="pt.c2"></h3><div class="slot"><i></i><i></i><i></i></div></div>
-        <div class="pt rv"><svg><use href="#i-fork"/></svg><h3 data-i18n="pt.c3"></h3><div class="slot"><i></i><i></i><i></i></div></div>
-        <div class="pt rv"><svg><use href="#i-van"/></svg><h3 data-i18n="pt.c4"></h3><div class="slot"><i></i><i></i><i></i></div></div>
-      </div>
-      <div class="pt-foot"><span class="owner">Sahibi için not: partner logoları panelden eklenecek</span><a class="btn btn-dark" data-partner target="_blank" rel="noopener" data-i18n="pt.cta"></a></div>
-    </div>
-    <div class="marquee" aria-hidden="true"><div class="marquee-in" id="marquee"></div></div>
-  </section>
+     <!-- 15. INSTAGRAM + PARTNERİMİZ OL (içerik fx.js'ten gelir) -->
+  <section class="ig sec" id="ortaklar"></section>
 
   <!-- 16. BÜLTEN -->
   <section class="news" id="bulten">
@@ -370,7 +359,10 @@
       </div>
     </div>
   </section>
-
+  <!-- 16b. KAYAN ŞERİT (partnerler ya da bölgeler) -->
+  <section class="strip" aria-hidden="true">
+    <div class="marquee"><div class="marquee-in" id="marquee"></div></div>
+  </section>
   <!-- 17. TÜRSAB BARI -->
   <section class="tbar" aria-label="TÜRSAB">
     <div class="c tbar-in">
@@ -454,8 +446,10 @@
 <script src="assets/js/planner.js"></script>
 <script src="assets/js/booking.js"></script>
 <script src="assets/js/places.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/offers.js"></script>
+<script src="assets/js/wa-msg.js"></script><script src="assets/js/guide.js"></script><script src="assets/js/app.js"></script>
    <script src="assets/js/wa-widget.js"></script>
+   <script src="assets/js/fx.js?v=3"></script>
 <!--BODY-END-->
 </body>
 </html>

@@ -112,7 +112,7 @@
 
   function sendToWhatsApp(text) {
     const lang = ((window.CVI18N && CVI18N.lang) || 'en').toUpperCase();
-    const url = 'https://wa.me/' + (window.CV ? CV.phone : '905354322782') + '?text=' + encodeURIComponent(text + '\n[' + lang + ']');
+    const url = 'https://wa.me/' + (window.CV ? CV.phone : '905354322782') + '?text=' + encodeURIComponent(window.CVMsg ? (text === L().hello ? CVMsg.hello() : CVMsg.say(text)) : text + '\n[' + lang + ']');
     const w = window.open(url, '_blank', 'noopener');
     if (!w) location.href = url;
   }

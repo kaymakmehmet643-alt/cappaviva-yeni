@@ -6,6 +6,8 @@ window.CV = {
   phone: '905354322782',              // WhatsApp (başında + olmadan)
   phoneDisplay: '+90 535 432 27 82',
   email: 'info@cappaviva.com',
+    instagram: 'cappaviva',              // Instagram kullanıcı adı (cappaviva)
+  partners: [],                        // partner isimleri, ör. ['Otel adı', 'Balon firması'] — doluysa alttaki kayan şeritte görünür
   tursabNo: '',                        // TÜRSAB belge numaranızı yazın, ör. '12345'
   defaultLang: 'en',                   // ziyaretçinin dili desteklenmiyorsa bu dil açılır
   liveRates: true,                     // güncel kurları internetten çek (frankfurter.app)
@@ -27,6 +29,7 @@ window.CV = {
     'bal-std': '', 'bal-cmf': '', 'bal-vip': '',
     gece: '', comlek: '',
     blog1: '', blog2: '', blog3: '',
+        ig1: '', ig2: '', ig3: '', ig4: '', ig5: '', igAvatar: '',   // Instagram bölümü: 5 fotoğraf + profil resmi
     tursab: ''                         // TÜRSAB logosu (png/svg)
   },
 

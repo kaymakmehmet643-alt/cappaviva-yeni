@@ -1,0 +1,367 @@
+/* =========================================================
+   CappaViva — PREMIUM v3 (premium.css)
+   style.css'ten SONRA yüklenir ve onun üzerine yazar.
+   1) Tema düğmesi + aydınlık / karanlık mod
+   2) Güven barı (Hero'nun hemen altında)
+   3) Destinasyon ve transfer düzeltmeleri
+   4) Hazır planlar
+   5) Planını tasarla
+   6) Partnerler
+   ========================================================= */
+
+/* ---------- 1a) TEMA DÜĞMESİ (güneş ↔ ay) ---------- */
+.th-btn{width:38px;height:38px;flex:none;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:inset 0 0 0 1px rgba(128,110,90,.35);transition:background .25s,box-shadow .25s,transform .35s var(--ease)}
+.th-btn:hover{background:rgba(224,145,79,.14);box-shadow:inset 0 0 0 1px rgba(224,145,79,.7),0 0 18px -4px rgba(224,145,79,.6)}
+.th-btn:active{transform:scale(.9)}
+.th-btn svg{width:20px;height:20px;overflow:visible}
+.th-sun,.th-moon{transform-box:view-box;transform-origin:center;transition:transform .7s cubic-bezier(.5,-.5,.3,1.5),opacity .35s}
+.th-moon{opacity:0;transform:rotate(-90deg) scale(.4)}
+[data-theme=dark] .th-btn{color:#ffd9a3}
+[data-theme=dark] .th-sun{opacity:0;transform:rotate(90deg) scale(.4)}
+[data-theme=dark] .th-moon{opacity:1;transform:none}
+
+/* tema değişirken: daire şeklinde yayılan geçiş */
+html.th-vt::view-transition-old(root),html.th-vt::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.th-vt::view-transition-new(root){z-index:9999}
+/* eski tarayıcılar için yumuşak renk geçişi */
+html.th-fade,html.th-fade *,html.th-fade *::before,html.th-fade *::after{transition:background-color .5s ease,color .5s ease,border-color .5s ease!important}
+
+/* ---------- 1b) KARANLIK MOD: "Kapadokya gecesi" paleti ---------- */
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --white:#11131f; --paper:#161a28; --sand:#232838; --line:rgba(255,255,255,.09);
+  --ink:#f3ece2; --ink-2:#b8afa2; --ink-3:#857e74;
+  --night:#080a13; --dark-2:#131726; --dark-3:#1c2134; --on-dark:#f3ece2; --on-dark-2:#a9a398;
+  --accent:#efa468; --accent-deep:#f3b47c; --rose:#d4728c;
+}
+/* üst bar, açılır menüler */
+[data-theme=dark] .nav:not(.on-hero){background:rgba(12,14,24,.78);border-bottom-color:rgba(255,255,255,.07)}
+[data-theme=dark] .nav.mega-open{background:rgba(14,16,28,.97);border-bottom-color:rgba(255,255,255,.07)}
+[data-theme=dark] .mega{background:rgba(14,16,28,.97);border-bottom-color:rgba(255,255,255,.07);box-shadow:0 40px 70px -40px rgba(0,0,0,.8)}
+[data-theme=dark] .mega-scrim{background:rgba(0,0,0,.45)}
+[data-theme=dark] .pop{background:rgba(22,26,40,.97);box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08)}
+[data-theme=dark] .opt[aria-checked="true"]{background:rgba(239,164,104,.16)}
+[data-theme=dark] .m-feature{background:#0b0d18;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+[data-theme=dark] .gm-b a{background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+[data-theme=dark] .gm-b a:hover{background:rgba(255,255,255,.08)}
+[data-theme=dark] .dp-tabs{background:rgba(14,16,28,.88);border-bottom-color:rgba(255,255,255,.07)}
+[data-theme=dark] .dp-tabs a:hover{background:rgba(255,255,255,.06)}
+/* koyu zeminli düğmeler karanlık modda turuncuya döner */
+[data-theme=dark] :is(.btn-dark,.filters button[aria-pressed="true"],.chip[aria-pressed="true"],.dp-tabs a.on,.see-all-btn,.cal-grid button[aria-pressed="true"],.cat-tabs button[aria-pressed="true"]){background:var(--accent);color:#1c1916}
+[data-theme=dark] .see-all-mini:hover{background:var(--accent);color:#1c1916}
+[data-theme=dark] .dp-tabs a.on small{background:#1c1916;color:var(--accent)}
+[data-theme=dark] :is(.sumcard,.res-sum){background:#0a0c16;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+/* açık renk kalan küçük parçalar */
+[data-theme=dark] :is(.bot-steps i,.bv-step i){background:#2a3042}
+[data-theme=dark] .bot-head,[data-theme=dark] .bot-acts{border-color:rgba(255,255,255,.07)}
+[data-theme=dark] .bot-av::after{border-color:#141826}
+[data-theme=dark] .tip{background:rgba(239,164,104,.1)}
+[data-theme=dark] .exp[aria-checked="true"]{background:rgba(239,164,104,.08)}
+[data-theme=dark] .cal-grid button:disabled{color:rgba(255,255,255,.22)}
+[data-theme=dark] .pd-tips{background:linear-gradient(160deg,#211a1c,#1a1520);box-shadow:inset 0 0 0 1px rgba(239,164,104,.2)}
+[data-theme=dark] .pt .slot i{background:repeating-linear-gradient(135deg,#1e2333 0 6px,#232838 6px 12px)}
+[data-theme=dark] .marquee-in span{color:rgba(255,255,255,.08)}
+[data-theme=dark] .marquee-in span em{color:rgba(239,164,104,.35)}
+[data-theme=dark] :is(.gp-ic,.gp-sec.alt .gp-ic){background:linear-gradient(150deg,#232838,#161a28);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+[data-theme=dark] .hd-form{background:rgba(18,21,34,.95)}
+[data-theme=dark] .hd-price i{background:rgba(255,90,90,.18);color:#ff9a9a}
+[data-theme=dark] .owner{background:rgba(229,164,92,.12);color:#f0c08a;border-color:rgba(229,164,92,.45)}
+/* kartların kenar çizgisi karanlıkta da görünsün */
+[data-theme=dark] :where(.dl-card,.tc-card,.pd-tour,.pd-w,.pd-rev blockquote,.gp-tip,.m-tier){box-shadow:0 0 0 1px rgba(255,255,255,.07)}
+
+/* ---------- 2) GÜVEN BARI: Hero'nun üzerine kayan premium şerit ---------- */
+.trust.tb{position:relative;z-index:2;margin-top:-46px;background:var(--white);border:0;border-radius:46px 46px 0 0;padding:clamp(34px,4vw,54px) 0 clamp(26px,3vw,40px);box-shadow:0 -30px 60px -30px rgba(15,18,32,.5)}
+.tb-bar{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-radius:28px;border:1.5px solid transparent;
+  background:linear-gradient(var(--paper),var(--paper)) padding-box,conic-gradient(from var(--ang),var(--line) 0deg,var(--line) 240deg,var(--accent) 295deg,#ffd9a3 318deg,var(--rose) 338deg,var(--line) 360deg) border-box;
+  animation:drSpin 9s linear infinite;box-shadow:0 30px 60px -40px rgba(40,25,10,.45)}
+.tb-cell{position:relative;display:flex;align-items:center;gap:14px;padding:20px clamp(14px,1.6vw,24px);min-width:0;transition:transform .45s var(--ease)}
+.tb-cell+.tb-cell::before{content:"";position:absolute;inset-inline-start:0;top:22%;bottom:22%;width:1px;background:linear-gradient(180deg,transparent,var(--line),transparent)}
+.tb-cell:hover{transform:translateY(-3px)}
+.tb-ic{flex:none;width:48px;height:48px;border-radius:16px;display:grid;place-items:center;overflow:hidden;color:var(--accent-deep);
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.9),transparent 60%),linear-gradient(150deg,#fbe7d3,#f3d2b3);
+  box-shadow:inset 0 0 0 1px rgba(165,86,31,.15),0 10px 22px -12px rgba(165,86,31,.55);transition:transform .5s var(--ease)}
+.tb-cell:hover .tb-ic{transform:rotate(-8deg) scale(1.08)}
+.tb-ic svg{width:22px;height:22px}
+.tb-wa{color:#fff;background:linear-gradient(150deg,#34d77a,#1fa855)}
+.tb-tursab{color:#fff;background:#0a3d8f}
+.tb-tursab .badge-t{height:auto;padding:0;background:none;font-size:9px;font-weight:800;letter-spacing:.02em}
+.tb-tursab img{width:100%;height:100%;object-fit:contain}
+.tb-tx{display:grid;gap:2px;min-width:0}
+.tb-tx strong{font-size:clamp(20px,1.9vw,26px);font-weight:800;letter-spacing:-.03em;line-height:1.05;direction:ltr;unicode-bidi:isolate;justify-self:start}
+.tb-cell:nth-child(-n+2) .tb-tx strong{background:linear-gradient(135deg,var(--accent-deep),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tb-tx span{font-size:12.5px;font-weight:600;color:var(--ink-2);line-height:1.3}
+[data-theme=dark] .tb-ic:not(.tb-wa):not(.tb-tursab){background:linear-gradient(150deg,#2a2230,#1d1a26);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(239,164,104,.25)}
+@media (max-width:1000px){.tb-bar{grid-template-columns:repeat(3,minmax(0,1fr))}.tb-cell:nth-child(4)::before{display:none}}
+@media (max-width:620px){
+  .trust.tb{margin-top:-28px;border-radius:28px 28px 0 0}
+  .tb-bar{grid-template-columns:1fr 1fr;border-radius:22px}
+  .tb-cell{padding:14px;gap:10px}
+  .tb-cell+.tb-cell::before{display:none}
+  .tb-cell:last-child{grid-column:1/-1;justify-content:center}
+  .tb-ic{width:40px;height:40px;border-radius:13px}
+  .tb-tx strong{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){.tb-bar{animation:none}}
+
+/* ---------- 3) DESTİNASYON + TRANSFER DÜZELTMELERİ ---------- */
+/* yuvarlak "kayan sayfa" efekti artık güven barında */
+.fx-dest{margin-top:0;border-radius:0;box-shadow:none}
+/* eski 4 kutulu transfer bir an bile görünmesin (yerine haritalı vitrin geliyor) */
+#transfer .tr-grid,#transfer .tr-note{display:none}
+
+/* ---------- 4) HAZIR PLANLAR ---------- */
+.plans{background:radial-gradient(800px 420px at 100% 0%,rgba(224,145,79,.10),transparent 60%),var(--white)}
+.plans .seg{background:var(--paper);padding:5px;box-shadow:inset 0 0 0 1px var(--line)}
+.plans .seg button{height:46px;padding:0 clamp(16px,2.6vw,30px)}
+.plans .seg button[aria-selected="true"]{color:#fff}
+.plans .seg-ind{top:5px;bottom:5px;background:linear-gradient(120deg,var(--accent-deep),var(--accent) 55%,var(--rose));box-shadow:0 10px 24px -10px rgba(224,145,79,.8)}
+.plan-panel{gap:clamp(22px,4vw,56px)}
+/* sol: koyu "bilet" kartı */
+.plan-sum{isolation:isolate;overflow:hidden;padding:clamp(26px,3vw,38px);border-radius:30px;color:var(--on-dark);
+  background:radial-gradient(520px 300px at 100% 0%,rgba(224,145,79,.32),transparent 60%),radial-gradient(420px 300px at 0% 100%,rgba(184,86,111,.25),transparent 60%),#0f1220;
+  box-shadow:0 40px 80px -40px rgba(15,18,32,.75)}
+.plan-sum::after{content:"";position:absolute;z-index:-1;width:190px;height:190px;inset-inline-end:-24px;bottom:-24px;opacity:.16;pointer-events:none;animation:pvFloat 6s ease-in-out infinite;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23efa468' stroke-width='.6' stroke-linejoin='round'%3E%3Cpath d='M12 2.5c-4 0-6.5 3-6.5 6.3 0 3 2.3 5.4 4.4 6.7h4.2c2.1-1.3 4.4-3.7 4.4-6.7 0-3.3-2.5-6.3-6.5-6.3zM12 2.5c-1.6 0-2.7 3-2.7 6.3 0 3 .9 5.4 1.7 6.7M12 2.5c1.6 0 2.7 3 2.7 6.3 0 3-.9 5.4-1.7 6.7M10 15.5l.4 3m3.6-3-.4 3'/%3E%3Crect x='9.8' y='18.5' width='4.4' height='3' rx='.8'/%3E%3C/svg%3E") center/contain no-repeat}
+.plan-sum .eyebrow{color:var(--accent)}
+.plan-sum h3{color:#fff}
+.plan-sum p{color:var(--on-dark-2)}
+.plan-sum .link{color:var(--accent)}
+[data-theme=dark] .plan-sum{background:radial-gradient(520px 300px at 100% 0%,rgba(224,145,79,.26),transparent 60%),radial-gradient(420px 300px at 0% 100%,rgba(184,86,111,.2),transparent 60%),#0a0c16;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 40px 80px -40px rgba(0,0,0,.8)}
+/* sağ: gün gün zaman çizelgesi */
+.plan-days{position:relative;counter-reset:pday;gap:16px}
+.plan-days::before{content:"";position:absolute;inset-inline-start:38px;top:40px;bottom:40px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--accent),var(--rose));opacity:.4}
+.plans .day{padding:22px 24px;padding-inline-start:80px;border-radius:24px}
+.plans .day h4{counter-increment:pday;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.plans .day h4::before{content:counter(pday,decimal-leading-zero);position:absolute;inset-inline-start:18px;top:20px;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-family:var(--f-serif);font-size:19px;font-weight:600;letter-spacing:0;color:#fff;background:linear-gradient(140deg,var(--accent-deep),var(--accent) 55%,var(--rose));box-shadow:0 12px 24px -12px rgba(184,86,111,.8)}
+.plans .day ol{gap:14px}
+.plans .day li{grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start}
+.plans .day time{display:inline-flex;align-items:center;justify-content:center;min-width:62px;height:28px;padding:0 10px;border-radius:999px;background:var(--white);box-shadow:inset 0 0 0 1px var(--line);font-size:12.5px;color:var(--accent-deep);font-variant-numeric:tabular-nums}
+.plans .day b{font-size:17px}
+/* sekme değişince her şey sırayla süzülerek gelir */
+.plan-anim .plan-sum{animation:sumIn .7s var(--ease) both}
+.plan-anim .day{animation:dayIn .7s var(--ease) both}
+.plan-anim .day:nth-child(2){animation-delay:.08s}
+.plan-anim .day:nth-child(3){animation-delay:.16s}
+.plan-anim .day:nth-child(4){animation-delay:.24s}
+.plan-anim .day li{animation:liIn .6s var(--ease) both}
+.plan-anim .day li:nth-child(2){animation-delay:.1s}
+.plan-anim .day li:nth-child(3){animation-delay:.2s}
+@keyframes sumIn{from{opacity:0;transform:translateY(16px)}}
+@keyframes dayIn{from{opacity:0;transform:translateY(22px) scale(.98)}}
+@keyframes liIn{from{opacity:0;transform:translateX(-14px)}}
+@media (max-width:560px){
+  .plans .day{padding-inline-start:64px}
+  .plans .day h4::before{inset-inline-start:14px;width:34px;height:34px;border-radius:11px;font-size:16px}
+  .plan-days::before{inset-inline-start:30px}
+}
+
+/* ---------- 5) PLANINI TASARLA: kuzey ışıkları ---------- */
+.planner{position:relative;isolation:isolate;overflow:hidden;color:var(--on-dark);
+  background:radial-gradient(900px 520px at 88% 8%,rgba(224,145,79,.30),transparent 60%),radial-gradient(800px 520px at 0% 95%,rgba(184,86,111,.28),transparent 60%),#0c0f1d}
+.planner::before{content:"";position:absolute;inset:-35%;z-index:-1;pointer-events:none;filter:blur(80px);animation:plAurora 26s linear infinite;
+  background:conic-gradient(from 0deg at 55% 45%,transparent 0deg,rgba(224,145,79,.20) 70deg,rgba(184,86,111,.16) 150deg,rgba(91,75,214,.18) 230deg,transparent 320deg)}
+.planner::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.55;
+  background:radial-gradient(1px 1px at 8% 18%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 22% 62%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 38% 12%,#ffd9a3 50%,transparent 51%),radial-gradient(1px 1px at 63% 30%,#fff 50%,transparent 51%),radial-gradient(1px 1px at 78% 70%,#fff 50%,transparent 51%),radial-gradient(1.5px 1.5px at 92% 22%,#ffd9a3 50%,transparent 51%),radial-gradient(1px 1px at 50% 88%,#fff 50%,transparent 51%)}
+@keyframes plAurora{to{transform:rotate(360deg)}}
+.planner .eyebrow{color:var(--accent)}
+.planner .pl-intro .h2{background:linear-gradient(100deg,#fff7ec 35%,#ffd9a3 65%,#f3b27a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.planner .pl-intro .lede{color:var(--on-dark-2)}
+/* 3 adım: numaralı cam kutular */
+.planner .pl-feats{counter-reset:plf;gap:12px;margin-top:18px}
+.planner .pl-feats li{counter-increment:plf;position:relative;gap:14px;padding:15px 18px;border-radius:18px;color:#fff;font-weight:700;background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .3s,box-shadow .3s,transform .4s var(--ease)}
+.planner .pl-feats li::before{content:counter(plf);width:30px;height:30px;font-size:13px;box-shadow:0 8px 18px -8px rgba(184,86,111,.9)}
+.planner .pl-feats li+li::after{content:"";position:absolute;inset-inline-start:32px;top:-13px;height:14px;border-inline-start:2px dashed rgba(243,178,122,.45)}
+.planner .pl-feats li:hover{background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(243,178,122,.6);transform:translateX(4px)}
+[dir=rtl] .planner .pl-feats li:hover{transform:translateX(-4px)}
+/* asistan kartı: dönen ışık çerçeve */
+.planner .bot{color:var(--ink);border:1.5px solid transparent;backdrop-filter:none;-webkit-backdrop-filter:none;animation:drSpin 7s linear infinite;
+  background:linear-gradient(rgba(255,253,250,.97),rgba(255,253,250,.97)) padding-box,conic-gradient(from var(--ang),rgba(255,255,255,.12) 0deg,rgba(255,255,255,.12) 200deg,#f3b27a 270deg,#ff8a9a 310deg,rgba(255,255,255,.12) 360deg) border-box;
+  box-shadow:0 50px 100px -40px rgba(0,0,0,.8),0 0 90px -30px rgba(224,145,79,.5)}
+[data-theme=dark] .planner .bot{background:linear-gradient(#141826,#141826) padding-box,conic-gradient(from var(--ang),rgba(255,255,255,.08) 0deg,rgba(255,255,255,.08) 200deg,#f3b27a 270deg,#ff8a9a 310deg,rgba(255,255,255,.08) 360deg) border-box}
+.planner .bot-av::before{content:"";position:absolute;inset:-5px;border-radius:50%;animation:drSpin 2.6s linear infinite;
+  background:conic-gradient(from var(--ang),transparent 0deg,#f3b27a 120deg,#ff8a9a 200deg,transparent 260deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px))}
+.planner .bot .chip[aria-pressed="true"]{background:linear-gradient(120deg,var(--accent-deep),var(--accent) 55%,var(--rose));color:#fff;box-shadow:0 10px 22px -12px rgba(184,86,111,.9)}
+.planner .bot .bot-acts .btn-dark{background:linear-gradient(120deg,var(--accent-deep),var(--accent) 60%,var(--rose));color:#fff}
+@media (prefers-reduced-motion:reduce){.planner::before,.planner .bot,.planner .bot-av::before{animation:none}}
+
+/* ---------- 6) PARTNERLER ---------- */
+.partners.pv{position:relative;overflow:hidden;background:var(--white)}
+.pv-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:clamp(30px,5vw,80px);align-items:center}
+.pv-intro{display:grid;gap:18px;justify-items:start}
+.pv-intro .eyebrow{display:inline-flex;align-items:center;gap:10px}
+.pv-intro .eyebrow::before{content:"";width:28px;height:1.5px;background:currentColor}
+.pv-intro .h2{background:linear-gradient(100deg,var(--ink) 40%,var(--accent-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pv-cta{height:52px;padding:0 26px;gap:12px}
+.pv-cta i{font-style:normal;transition:transform .3s var(--ease)}
+.pv-cta:hover i{transform:translateX(4px)}
+[dir=rtl] .pv-cta i{transform:scaleX(-1)}
+.pv-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.pv-card{position:relative;isolation:isolate;overflow:hidden;display:grid;gap:14px;align-content:start;min-height:230px;padding:26px;border-radius:26px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);transition:transform .5s var(--ease),box-shadow .5s}
+.pv-card:nth-child(even){margin-top:28px}
+.pv-card::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;padding:1.5px;opacity:0;transition:opacity .4s;animation:drSpin 4s linear infinite;
+  background:conic-gradient(from var(--ang),transparent 0deg,transparent 200deg,var(--accent) 270deg,var(--rose) 320deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.pv-card::after{content:"";position:absolute;z-index:-1;width:220px;height:220px;inset-inline-end:-80px;bottom:-90px;border-radius:50%;background:radial-gradient(circle,rgba(224,145,79,.28),transparent 65%);transition:transform .6s var(--ease)}
+.pv-card:hover{transform:translateY(-6px);box-shadow:inset 0 0 0 1px transparent,0 30px 60px -30px rgba(165,86,31,.5)}
+.pv-card:hover::before{opacity:1}
+.pv-card:hover::after{transform:scale(1.4)}
+.pv-no{position:absolute;top:20px;inset-inline-end:22px;font-family:var(--f-serif);font-size:44px;line-height:1;color:transparent;-webkit-text-stroke:1.2px var(--accent);opacity:.7}
+.pv-ic{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,var(--accent-deep),var(--accent) 55%,var(--rose));box-shadow:0 16px 30px -14px rgba(184,86,111,.8);animation:pvFloat 5s ease-in-out infinite;animation-delay:calc(var(--i,0) * -1.2s)}
+.pv-ic svg{width:26px;height:26px}
+@keyframes pvFloat{50%{transform:translateY(-6px) rotate(-4deg)}}
+.pv-card h3{font-size:21px;letter-spacing:-.02em;max-width:16ch}
+.pv-logos{margin-top:auto;display:flex;gap:8px}
+.pv-logos i{flex:1;height:34px;border-radius:10px;border:1.5px dashed var(--line);background:linear-gradient(110deg,transparent 30%,rgba(224,145,79,.14) 50%,transparent 70%) 0 0/200% 100%;animation:pvShim 2.8s linear infinite}
+@keyframes pvShim{to{background-position:-200% 0}}
+@media (max-width:900px){.pv-grid{grid-template-columns:1fr}.pv-card:nth-child(even){margin-top:0}}
+@media (max-width:520px){.pv-cards{grid-template-columns:1fr}.pv-card{min-height:0}}
+
+/* =========================================================
+   PREMIUM v4 — destinasyon kartları, turlar, blog, yorumlar,
+   Instagram, kayan şerit
+   ========================================================= */
+@property --lift{syntax:'<length>';inherits:false;initial-value:0px}
+@property --rx{syntax:'<angle>';inherits:false;initial-value:0deg}
+@property --ry{syntax:'<angle>';inherits:false;initial-value:0deg}
+
+/* ---------- 7) DESTİNASYON KARTLARI: 3B akış + cam bilgi paneli ---------- */
+.dest .dcard{--p:0;--a:0;width:clamp(270px,27vw,390px);padding:0;border-radius:30px;justify-content:flex-end;transform-origin:50% 60%;
+  transform:perspective(1200px) translateY(var(--lift)) rotateY(calc(var(--p) * -14deg)) scale(calc(1 - var(--a) * .08));
+  transition:--lift .5s var(--ease),box-shadow .5s var(--ease);
+  box-shadow:0 0 0 1.5px rgba(243,178,122,calc(.85 - var(--a) * 1.4)),0 34px 70px -30px rgba(20,10,5,calc(.65 - var(--a) * .4))}
+.dest .dcard:hover{--lift:-10px}
+.dest .dcard::before{background:linear-gradient(180deg,rgba(10,8,14,.35) 0%,rgba(10,8,14,0) 26%,rgba(10,8,14,0) 46%,rgba(10,8,14,.7) 100%)}
+.dest .dcard:not(.dcard-all)::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:#0b0d17;opacity:calc(var(--a) * .38)}
+/* fotoğraf kartın içinde ters yöne kayar (derinlik hissi) */
+.dest .dcard .media canvas,.dest .dcard .media img{transform:none;translate:calc(var(--p) * -9%) 0;scale:1.22;transition:scale 1.2s var(--ease),opacity .6s}
+.dest .dcard:hover .media canvas,.dest .dcard:hover .media img{transform:none;scale:1.3}
+.dest .dcard:not(.dcard-all) .num{position:absolute;z-index:3;top:16px;inset-inline-start:22px;font-family:var(--f-serif);font-style:normal;font-size:58px;font-weight:300;line-height:1;color:transparent;-webkit-text-stroke:1.2px rgba(255,255,255,.85);opacity:1}
+.dc-km{position:absolute;z-index:3;top:20px;inset-inline-end:18px;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:800;color:#fff;background:rgba(255,255,255,.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}
+.dc-body{position:relative;z-index:3;margin:14px;padding:20px 20px 18px;border-radius:22px;display:grid;gap:4px;
+  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.05));backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);transition:background .4s}
+.dest .dcard:hover .dc-body{background:linear-gradient(160deg,rgba(255,255,255,.22),rgba(255,255,255,.08))}
+.dc-body small{font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ffd9a3;opacity:1}
+.dc-body h3{font-size:clamp(28px,2.6vw,36px);margin:2px 0 4px;padding-inline-end:48px}
+.dc-body p{font-size:14.5px;line-height:1.4;opacity:.88;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dc-go{position:absolute;top:-22px;inset-inline-end:18px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:700;color:#1c1916;background:var(--accent);box-shadow:0 12px 26px -10px rgba(224,145,79,.9);transition:transform .5s var(--ease),background .3s}
+.dest .dcard:hover .dc-go{transform:rotate(-45deg) scale(1.08);background:#ffd9a3}
+[dir=rtl] .dc-go{transform:scaleX(-1)}
+@media (max-width:899px){.dest .dcard{width:min(80vw,340px)}}
+
+/* ---------- 8) TURLAR: sırayla yükselir, fareyle 3B eğilir ---------- */
+.tgrid{perspective:none}
+.tgrid .tile.rv-s{animation:none}
+.tgrid .tile{transform:perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));
+  transition:--rx .45s var(--ease),--ry .45s var(--ease),--lift .5s var(--ease),box-shadow .5s var(--ease),opacity .9s var(--ease),translate .9s var(--ease),scale .9s var(--ease)}
+.tgrid .tile:hover{--lift:-6px}
+.fx-tiles .tile:not(.in){opacity:0;translate:0 70px;scale:.95}
+.fx-tiles .tile.in{transition-delay:0s,0s,0s,0s,calc(var(--d,0) * .12s),calc(var(--d,0) * .12s),calc(var(--d,0) * .12s)}
+.tgrid .tile .tile-bot .btn-primary{box-shadow:0 10px 24px -10px rgba(224,145,79,.9)}
+
+/* ---------- 9) BLOG: dergi düzeni ---------- */
+.blog{background:radial-gradient(900px 480px at 0% 0%,rgba(224,145,79,.08),transparent 60%),var(--white)}
+.blog .bl-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:20px}
+.blog .post{border-radius:28px}
+.blog .post:first-child{grid-row:span 2;display:block;min-height:560px;background:#14121a;color:#fff;box-shadow:none}
+.blog .post:first-child .ph{position:absolute;inset:0;aspect-ratio:auto}
+.blog .post:first-child .post-b{position:absolute;inset:auto 0 0 0;z-index:2;padding:clamp(24px,3vw,36px);gap:12px;background:linear-gradient(180deg,rgba(12,10,16,0),rgba(12,10,16,.88) 42%)}
+.blog .post:first-child .post-b h3{font-size:clamp(30px,3.2vw,44px);color:#fff}
+.blog .post:first-child .post-b p{color:rgba(255,255,255,.78);max-width:46ch}
+.blog .post:first-child .post-b small{background:rgba(255,255,255,.16);color:#ffd9a3;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.blog .post:not(:first-child){grid-template-columns:minmax(0,.95fr) minmax(0,1fr);grid-template-rows:none}
+.blog .post:not(:first-child) .ph{aspect-ratio:auto;height:100%;min-height:230px}
+.blog .post-b{gap:10px;align-content:center}
+.blog .post-b small{justify-self:start;padding:6px 12px;border-radius:999px;background:rgba(224,145,79,.14);color:var(--accent-deep);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+.blog .post-b h3{font-family:var(--f-serif);font-weight:500;font-size:clamp(23px,2vw,28px);line-height:1.08;letter-spacing:-.01em}
+.blog .post-b::after{content:"→";justify-self:start;margin-top:6px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:700;box-shadow:inset 0 0 0 1.5px currentColor;transition:transform .45s var(--ease),background .3s,color .3s,box-shadow .3s}
+.blog .post:hover .post-b::after{transform:translateX(6px) rotate(-45deg);background:var(--accent);color:#1c1916;box-shadow:none}
+[dir=rtl] .blog .post-b::after{content:"←"}
+.blog .post:hover .media canvas,.blog .post:hover .media img{transform:scale(1.08)}
+@media (max-width:860px){
+  .blog .bl-grid{grid-template-columns:1fr;grid-template-rows:none}
+  .blog .post:first-child{grid-row:auto;min-height:460px}
+  .blog .post:not(:first-child){grid-template-columns:1fr}
+  .blog .post:not(:first-child) .ph{aspect-ratio:16/10;height:auto;min-height:0}
+}
+
+/* ---------- 10) YORUMLAR: ışıklı puan kartı ---------- */
+.reviews{background:radial-gradient(900px 500px at 15% 0%,rgba(224,145,79,.14),transparent 60%),var(--paper)}
+.rv-box{position:relative;isolation:isolate;overflow:hidden;color:#f4efe7;
+  background:radial-gradient(640px 380px at 100% 0%,rgba(224,145,79,.3),transparent 60%),radial-gradient(520px 380px at 0% 100%,rgba(184,86,111,.24),transparent 60%),#0f1220;
+  box-shadow:0 50px 100px -50px rgba(15,18,32,.8)}
+.rv-box::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;animation:drSpin 8s linear infinite;
+  background:conic-gradient(from var(--ang),rgba(255,255,255,.08) 0deg,rgba(255,255,255,.08) 220deg,#f3b27a 290deg,#ff8a9a 330deg,rgba(255,255,255,.08) 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.rv-box::after{content:"\201C";position:absolute;z-index:-1;inset-inline-end:3%;top:-12%;font-family:Georgia,serif;font-size:clamp(240px,30vw,440px);line-height:1;color:rgba(255,255,255,.05);pointer-events:none}
+.rv-score strong{background:linear-gradient(160deg,#fff 30%,#ffd9a3 62%,#f3b27a);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.rv-score .stars{color:#ffc36b;gap:6px;filter:drop-shadow(0 0 10px rgba(255,195,107,.45))}
+.rv-score .stars svg{width:26px;height:26px;animation:stTw 2.8s ease-in-out infinite}
+.rv-score .stars svg:nth-child(2){animation-delay:.15s}
+.rv-score .stars svg:nth-child(3){animation-delay:.3s}
+.rv-score .stars svg:nth-child(4){animation-delay:.45s}
+.rv-score .stars svg:nth-child(5){animation-delay:.6s}
+@keyframes stTw{0%,70%,100%{transform:none}35%{transform:scale(1.22) rotate(12deg)}}
+.rv-text .eyebrow{color:var(--accent)}
+.rv-text h3{color:#fff;font-size:clamp(30px,3.4vw,46px)}
+.rv-text p{color:rgba(244,239,231,.72)}
+.rv-acts{gap:12px}
+.rv-acts .btn{height:50px;padding:0 24px}
+.rv-acts .btn-dark,[data-theme=dark] .rv-acts .btn-dark{background:#fff;color:#1c1916}
+.rv-acts .btn-line{color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
+.rv-acts .btn-line:hover{background:rgba(255,255,255,.1)}
+
+/* ---------- 11) INSTAGRAM (@cappaviva) + PARTNERİMİZ OL ---------- */
+.ig{position:relative;isolation:isolate;overflow:hidden;background:var(--white)}
+.ig::before{content:"";position:absolute;z-index:-1;width:720px;height:720px;inset-inline-end:-220px;top:-260px;border-radius:50%;background:radial-gradient(circle,rgba(214,41,118,.14),rgba(150,47,191,.08) 40%,transparent 65%);pointer-events:none}
+.ig-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:clamp(30px,5vw,80px);align-items:center}
+.ig-intro{display:grid;gap:20px;justify-items:start;min-width:0}
+.ig-profile{display:inline-flex;align-items:center;gap:14px;padding:8px 20px 8px 8px;border-radius:999px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);transition:transform .35s var(--ease),box-shadow .35s}
+.ig-profile:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px rgba(214,41,118,.5),0 16px 34px -18px rgba(214,41,118,.6)}
+.ig-ring{width:58px;height:58px;flex:none;border-radius:50%;padding:2.5px;display:grid;animation:drSpin 6s linear infinite;background:conic-gradient(from var(--ang),#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5,#feda75)}
+.ig-av{position:relative;overflow:hidden;border-radius:50%;display:grid;place-items:center;background:var(--night);color:#fff;font-family:var(--f-serif);font-size:19px;letter-spacing:.04em;box-shadow:0 0 0 2.5px var(--paper)}
+.ig-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ig-profile b{display:block;font-size:17px;letter-spacing:-.01em}
+.ig-profile small{font-size:12.5px;color:var(--ink-2);font-weight:600}
+.ig-intro .h2{font-size:clamp(36px,3.8vw,56px);overflow-wrap:break-word;max-width:100%;background:linear-gradient(100deg,var(--ink) 35%,#d62976 70%,#962fbf);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.ig-acts{display:flex;flex-wrap:wrap;gap:10px}
+.ig-acts .btn{height:52px;padding:0 24px}
+.ig-follow{color:#fff;background:linear-gradient(115deg,#feda75 -20%,#fa7e1e 15%,#d62976 50%,#962fbf 80%,#4f5bd5 115%);background-size:170% 100%;box-shadow:0 16px 34px -14px rgba(214,41,118,.75);transition:background-position .7s var(--ease),transform .3s var(--ease)}
+.ig-follow:hover{background-position:100% 0;transform:translateY(-2px)}
+.ig-follow svg{width:19px;height:19px}
+.ig-feed{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.ig-post{position:relative;display:block;aspect-ratio:1;border-radius:22px;overflow:hidden;isolation:isolate;background:#1a1620;
+  transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(var(--lift));transition:--rx .45s var(--ease),--ry .45s var(--ease),--lift .5s var(--ease),box-shadow .5s}
+.ig-post:first-child{grid-column:span 2;grid-row:span 2;border-radius:28px}
+.ig-post .media{z-index:0}
+.ig-post:hover{--lift:-6px;box-shadow:0 30px 60px -28px rgba(150,47,191,.65)}
+.ig-post:hover .media canvas,.ig-post:hover .media img{transform:scale(1.1)}
+.ig-mini{position:absolute;z-index:1;top:12px;inset-inline-end:12px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;color:#fff;background:rgba(0,0,0,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ig-mini svg{width:16px;height:16px}
+.ig-hover{position:absolute;inset:0;z-index:2;display:grid;place-content:center;justify-items:center;gap:10px;color:#fff;background:linear-gradient(150deg,rgba(214,41,118,.62),rgba(79,91,213,.62));opacity:0;transition:opacity .4s}
+.ig-hover svg{width:36px;height:36px;transform:scale(.6) rotate(-12deg);transition:transform .55s var(--ease)}
+.ig-hover b{font-size:13px;font-weight:800;letter-spacing:.02em;transform:translateY(8px);transition:transform .55s var(--ease)}
+.ig-post:hover .ig-hover{opacity:1}
+.ig-post:hover .ig-hover svg,.ig-post:hover .ig-hover b{transform:none}
+@media (max-width:900px){.ig-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.ig-feed{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ig-post:first-child{grid-row:auto}}
+@media (prefers-reduced-motion:reduce){.ig-ring,.rv-box::before{animation:none}}
+
+/* ---------- 12) BÜLTENDEN SONRA KAYAN ŞERİT (gece kartı) ---------- */
+.strip{padding:0 max(var(--g),calc((100vw - var(--c)) / 2 + var(--g))) clamp(40px,5vw,64px);background:var(--white)}
+.strip .marquee{position:relative;margin:0;padding:clamp(20px,2.4vw,28px) 0;border-radius:28px;border:1px solid transparent;-webkit-mask-image:none;mask-image:none;
+  background:radial-gradient(55% 180% at 50% 50%,rgba(224,145,79,.14),transparent 70%) padding-box,linear-gradient(180deg,#141729,#0c0e19) padding-box,
+    conic-gradient(from var(--ang),rgba(243,178,122,.14) 0deg,rgba(243,178,122,.14) 250deg,rgba(255,220,170,.85) 300deg,rgba(243,178,122,.14) 350deg) border-box;
+  animation:drSpin 10s linear infinite;box-shadow:0 30px 60px -34px rgba(15,18,32,.55)}
+/* kenarlarda yazılar yumuşakça kaybolur */
+.strip .marquee::before,.strip .marquee::after{content:"";position:absolute;top:0;bottom:0;width:clamp(50px,8vw,120px);z-index:1;pointer-events:none}
+.strip .marquee::before{left:0;border-radius:28px 0 0 28px;background:linear-gradient(90deg,#10121f,rgba(16,18,31,0))}
+.strip .marquee::after{right:0;border-radius:0 28px 28px 0;background:linear-gradient(270deg,#10121f,rgba(16,18,31,0))}
+.strip .marquee-in{align-items:center;gap:30px;animation-duration:55s}
+.strip .marquee:hover .marquee-in{animation-play-state:paused}
+.strip .marquee-in span,[data-theme=dark] .strip .marquee-in span{font-family:var(--f-serif);font-size:clamp(22px,2.5vw,34px);font-weight:300;letter-spacing:.01em;color:rgba(244,239,231,.8);transition:color .3s}
+.strip .marquee-in span:hover{color:#fff}
+.strip .marquee-in span em,[data-theme=dark] .strip .marquee-in span em{font-style:italic;font-weight:300;color:#f3c58f}
+.strip .marquee-in .mq-tag{font-family:var(--f)!important;font-size:11px!important;font-weight:700!important;letter-spacing:.24em!important;text-transform:uppercase;padding:7px 14px;border-radius:999px;color:#f3c58f!important;box-shadow:inset 0 0 0 1px rgba(243,197,143,.4)}
+@media (max-width:620px){.strip .marquee{border-radius:20px}.strip .marquee::before{border-radius:20px 0 0 20px}.strip .marquee::after{border-radius:0 20px 20px 0}}
+@media (prefers-reduced-motion:reduce){.strip .marquee{animation:none}}
